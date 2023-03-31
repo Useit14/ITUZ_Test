@@ -42,7 +42,7 @@
             // 
             this.labelQuestion.AutoSize = true;
             this.labelQuestion.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.labelQuestion.Location = new System.Drawing.Point(32, 65);
+            this.labelQuestion.Location = new System.Drawing.Point(42, 69);
             this.labelQuestion.Name = "labelQuestion";
             this.labelQuestion.Size = new System.Drawing.Size(126, 24);
             this.labelQuestion.TabIndex = 0;
@@ -52,7 +52,7 @@
             // 
             this.checkBox1.AutoSize = true;
             this.checkBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.checkBox1.Location = new System.Drawing.Point(355, 65);
+            this.checkBox1.Location = new System.Drawing.Point(552, 65);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(123, 28);
             this.checkBox1.TabIndex = 1;
@@ -64,7 +64,7 @@
             // 
             this.checkBox2.AutoSize = true;
             this.checkBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.checkBox2.Location = new System.Drawing.Point(355, 99);
+            this.checkBox2.Location = new System.Drawing.Point(552, 99);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(123, 28);
             this.checkBox2.TabIndex = 2;
@@ -76,7 +76,7 @@
             // 
             this.checkBox3.AutoSize = true;
             this.checkBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.checkBox3.Location = new System.Drawing.Point(355, 133);
+            this.checkBox3.Location = new System.Drawing.Point(552, 133);
             this.checkBox3.Name = "checkBox3";
             this.checkBox3.Size = new System.Drawing.Size(123, 28);
             this.checkBox3.TabIndex = 3;
@@ -86,9 +86,10 @@
             // 
             // labelNumberQuestion
             // 
+            this.labelNumberQuestion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.labelNumberQuestion.AutoSize = true;
             this.labelNumberQuestion.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.labelNumberQuestion.Location = new System.Drawing.Point(12, 281);
+            this.labelNumberQuestion.Location = new System.Drawing.Point(12, 410);
             this.labelNumberQuestion.Name = "labelNumberQuestion";
             this.labelNumberQuestion.Size = new System.Drawing.Size(195, 24);
             this.labelNumberQuestion.TabIndex = 4;
@@ -96,7 +97,8 @@
             // 
             // buttonNext
             // 
-            this.buttonNext.Location = new System.Drawing.Point(623, 279);
+            this.buttonNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonNext.Location = new System.Drawing.Point(911, 408);
             this.buttonNext.Name = "buttonNext";
             this.buttonNext.Size = new System.Drawing.Size(75, 23);
             this.buttonNext.TabIndex = 5;
@@ -106,17 +108,19 @@
             // 
             // listBoxResult
             // 
+            this.listBoxResult.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listBoxResult.Enabled = false;
             this.listBoxResult.FormattingEnabled = true;
-            this.listBoxResult.Location = new System.Drawing.Point(36, 34);
+            this.listBoxResult.Location = new System.Drawing.Point(0, 0);
             this.listBoxResult.Name = "listBoxResult";
-            this.listBoxResult.Size = new System.Drawing.Size(583, 225);
+            this.listBoxResult.Size = new System.Drawing.Size(998, 443);
             this.listBoxResult.TabIndex = 6;
             this.listBoxResult.Visible = false;
             // 
             // buttonReset
             // 
-            this.buttonReset.Location = new System.Drawing.Point(544, 279);
+            this.buttonReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonReset.Location = new System.Drawing.Point(830, 408);
             this.buttonReset.Name = "buttonReset";
             this.buttonReset.Size = new System.Drawing.Size(75, 23);
             this.buttonReset.TabIndex = 7;
@@ -129,7 +133,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(710, 314);
+            this.AutoSize = true;
+            this.ClientSize = new System.Drawing.Size(998, 443);
             this.Controls.Add(this.buttonReset);
             this.Controls.Add(this.buttonNext);
             this.Controls.Add(this.labelNumberQuestion);

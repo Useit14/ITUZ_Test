@@ -16,6 +16,7 @@ namespace List
         public Form1()
         {
             InitializeComponent();
+            Start();
         }
         Dictionary<string,string> etalon = new Dictionary<string, string>()
         {
@@ -176,15 +177,6 @@ namespace List
                 }
             },
             {
-                "В каком случае предложения, претендующие на знания, становятся знаниями?",
-                new string[]
-                {
-                    "Знание интерсубъективно и общезначимо, поэтому знание преподают в школах и университетах.",
-                    "Активность - свойство знания, которые позволяет знанию преводаваться в школах и университетах.",
-                    "Внутренняя структура связей  - свойство знания, которые позволяет знанию преводаваться в школах и университетах."
-                }
-            },
-            {
                 "Является ли знанием обоснованное истинное убеждение?",
                 new string[]
                 {
@@ -286,12 +278,30 @@ namespace List
             }
         };
         int index = 0;
-        int[] randomIndexes = randomMassive(questionsAndAnswers.Count);
+        int[] randomIndexes = randomMassive(questionsAndAnswers.Count,questionsAndAnswers.Count,new List<int>());
         Dictionary<string, string[]> questionsAndUserNaswers = new Dictionary<string, string[]>();
 
+        private void Start()
+        {
+            labelQuestion.Text = questionsAndAnswers.ElementAt(randomIndexes[index]).Key;
+            labelNumberQuestion.Text = index.ToString();
+            checkBox1.Text = questionsAndAnswers.ElementAt(randomIndexes[index]).Value[0];
+            checkBox2.Text = questionsAndAnswers.ElementAt(randomIndexes[index]).Value[1];
+            checkBox3.Text = questionsAndAnswers.ElementAt(randomIndexes[index]).Value[2];
+        }
 
         private void buttonNext_Click(object sender, EventArgs e)
         {
+            if (checkBox1.Checked)
+            {
+                checkBox1_CheckedChanged(sender,e);
+            } else if (checkBox2.Checked)
+            {
+                checkBox2_CheckedChanged(sender, e);
+            } else if (checkBox3.Checked)
+            {
+                checkBox3_CheckedChanged(sender, e);
+            }
             index++;
             if (index >= questionsAndAnswers.Count)
             {
@@ -300,8 +310,8 @@ namespace List
                 int total = questionsAndAnswers.Count;
                 for(int i = 0; i < total; i++)
                 {
-                    listBoxResult.Items.Add(questionsAndUserNaswers.ElementAt(i).Key+ " " +
-                        questionsAndUserNaswers.ElementAt(i).Value[0] + " " +
+                    listBoxResult.Items.Add("Вопрос " + questionsAndUserNaswers.ElementAt(i).Key+ " Ответ пользователя " +
+                        questionsAndUserNaswers.ElementAt(i).Value[0] + " Правильность ответа " +
                         questionsAndUserNaswers.ElementAt(i).Value[1]);
                     if (questionsAndUserNaswers.ElementAt(i).Value[1] == "1")
                     {
@@ -320,44 +330,45 @@ namespace List
             else
             {
                 labelQuestion.Text = questionsAndAnswers.ElementAt(randomIndexes[index]).Key;
+                labelNumberQuestion.Text = index.ToString();
                 checkBox1.Text = questionsAndAnswers.ElementAt(randomIndexes[index]).Value[0];
-                checkBox1.Text = questionsAndAnswers.ElementAt(randomIndexes[index]).Value[1];
-                checkBox1.Text = questionsAndAnswers.ElementAt(randomIndexes[index]).Value[2];
+                checkBox2.Text = questionsAndAnswers.ElementAt(randomIndexes[index]).Value[1];
+                checkBox3.Text = questionsAndAnswers.ElementAt(randomIndexes[index]).Value[2];
             }
         }
 
         private void buttonReset_Click(object sender, EventArgs e)
         {
             index = 0;
-            randomIndexes = randomMassive(questionsAndAnswers.Count);
-            questionsAndAnswers.Clear();
+            randomIndexes = randomMassive(questionsAndAnswers.Count, questionsAndAnswers.Count, new List<int>());
+            questionsAndUserNaswers.Clear();
             listBoxResult.Visible = false;
             listBoxResult.Enabled = false;
             labelQuestion.Visible = true;
             checkBox1.Visible = true;
             checkBox2.Visible = true;
             checkBox3.Visible = true;
+            buttonNext.Enabled = true;
             buttonReset.Visible = false;
-            buttonNext.PerformClick();
+            buttonNext_Click(sender,e);
         }
 
-        public static int[] randomMassive (int lenghtMassive)
+        public static int[] randomMassive (int currentLenghtMassive, int lenghtMassive, List<int> randomList)
         {
-            int[] results = new int[lenghtMassive];
             Random rnd = new Random();
-            for(int i = 0; i < lenghtMassive; i++)
+            for(int i = 0; i < currentLenghtMassive; i++)
             {
                 int randomNumber = rnd.Next(0, lenghtMassive);
-                if (results.Contains(randomNumber))
+                if (!randomList.Contains(randomNumber))
                 {
-                    continue;
-                }
-                else
-                {
-                    results[i] = randomNumber;
+                    randomList.Add(randomNumber);
                 }
             }
-            return results;
+            if(randomList.Count < lenghtMassive)
+            {
+                return randomMassive(lenghtMassive - randomList.Count, lenghtMassive,randomList);
+            }
+            return randomList.ToArray() ;
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
