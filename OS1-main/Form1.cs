@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
@@ -278,29 +279,29 @@ namespace List
             }
         };
         int index = 0;
-        int[] randomIndexes = randomMassive(questionsAndAnswers.Count,questionsAndAnswers.Count,new List<int>());
+        int[] randomIndexes = randomMassive(questionsAndAnswers.Count,questionsAndAnswers.Count);
         Dictionary<string, string[]> questionsAndUserNaswers = new Dictionary<string, string[]>();
-
+        static List<int> used=new List<int>(); 
         private void Start()
         {
             labelQuestion.Text = questionsAndAnswers.ElementAt(randomIndexes[index]).Key;
             labelNumberQuestion.Text = index.ToString();
-            checkBox1.Text = questionsAndAnswers.ElementAt(randomIndexes[index]).Value[0];
-            checkBox2.Text = questionsAndAnswers.ElementAt(randomIndexes[index]).Value[1];
-            checkBox3.Text = questionsAndAnswers.ElementAt(randomIndexes[index]).Value[2];
+            radioButton1.Text = questionsAndAnswers.ElementAt(randomIndexes[index]).Value[0];
+            radioButton2.Text = questionsAndAnswers.ElementAt(randomIndexes[index]).Value[1];
+            radioButton3.Text = questionsAndAnswers.ElementAt(randomIndexes[index]).Value[2];
         }
 
         private void buttonNext_Click(object sender, EventArgs e)
         {
-            if (checkBox1.Checked)
+            if (radioButton1.Checked)
             {
-                checkBox1_CheckedChanged(sender,e);
-            } else if (checkBox2.Checked)
+                checkAnswer(2);
+            } else if (radioButton2.Checked)
             {
-                checkBox2_CheckedChanged(sender, e);
-            } else if (checkBox3.Checked)
+                checkAnswer(1);
+            } else if (radioButton3.Checked)
             {
-                checkBox3_CheckedChanged(sender, e);
+                checkAnswer(0);
             }
             index++;
             if (index >= questionsAndAnswers.Count)
@@ -308,132 +309,122 @@ namespace List
                 buttonNext.Enabled = false;
                 int countRight = 0;
                 int total = questionsAndAnswers.Count;
+                List<Result> results = new List<Result>(); 
                 for(int i = 0; i < total; i++)
                 {
-                    listBoxResult.Items.Add("Вопрос " + questionsAndUserNaswers.ElementAt(i).Key+ " Ответ пользователя " +
-                        questionsAndUserNaswers.ElementAt(i).Value[0] + " Правильность ответа " +
-                        questionsAndUserNaswers.ElementAt(i).Value[1]);
+                    results.Add(new Result()
+                        {
+                        question= questionsAndUserNaswers.ElementAt(i).Key,
+                        answerUser= questionsAndUserNaswers.ElementAt(i).Value[0],
+                        rightOrFalse=questionsAndUserNaswers.ElementAt(i).Value[1]
+                        });
+
                     if (questionsAndUserNaswers.ElementAt(i).Value[1] == "1")
                     {
                         countRight++;
                     }
                 }
-                listBoxResult.Visible = true;
-                listBoxResult.Enabled = true;
-                listBoxResult.Items.Add(countRight + "/" + total);
+                results.Add(new Result()
+                {
+                    question = "Оценка",
+                    answerUser = countRight + "/" + total,
+                    rightOrFalse = (countRight * 100 / total).ToString()+"%"
+                });
+                dataGridView1.DataSource = results;
+                dataGridView1.Columns[0].HeaderText = "Вопрос";
+                dataGridView1.Columns[1].HeaderText = "Ответ пользователя";
+                dataGridView1.Columns[2].HeaderText = "Правильность ответа";
+                dataGridView1.Update();
+                dataGridView1.Visible = true;
                 labelQuestion.Visible = false;
-                checkBox1.Visible = false;
-                checkBox2.Visible = false;
-                checkBox3.Visible = false;
+                groupRadioButtons.Visible = false;
                 buttonReset.Visible = true;
             }
             else
             {
                 labelQuestion.Text = questionsAndAnswers.ElementAt(randomIndexes[index]).Key;
                 labelNumberQuestion.Text = index.ToString();
-                checkBox1.Text = questionsAndAnswers.ElementAt(randomIndexes[index]).Value[0];
-                checkBox2.Text = questionsAndAnswers.ElementAt(randomIndexes[index]).Value[1];
-                checkBox3.Text = questionsAndAnswers.ElementAt(randomIndexes[index]).Value[2];
+                radioButton1.Text = questionsAndAnswers.ElementAt(randomIndexes[index]).Value[0];
+                radioButton2.Text = questionsAndAnswers.ElementAt(randomIndexes[index]).Value[1];
+                radioButton3.Text = questionsAndAnswers.ElementAt(randomIndexes[index]).Value[2];
             }
         }
 
         private void buttonReset_Click(object sender, EventArgs e)
         {
             index = 0;
-            randomIndexes = randomMassive(questionsAndAnswers.Count, questionsAndAnswers.Count, new List<int>());
+            used.Clear();
+            randomIndexes = randomMassive(questionsAndAnswers.Count, questionsAndAnswers.Count);
             questionsAndUserNaswers.Clear();
-            listBoxResult.Visible = false;
-            listBoxResult.Enabled = false;
+            dataGridView1.Visible = false;
             labelQuestion.Visible = true;
-            checkBox1.Visible = true;
-            checkBox2.Visible = true;
-            checkBox3.Visible = true;
+            groupRadioButtons.Visible = true;
             buttonNext.Enabled = true;
             buttonReset.Visible = false;
             buttonNext_Click(sender,e);
         }
 
-        public static int[] randomMassive (int currentLenghtMassive, int lenghtMassive, List<int> randomList)
+        private static bool isDouble(int randomNumber)
+        {
+            if (!used.Contains(randomNumber))
+            {
+                used.Add(randomNumber);
+                return false;
+            }
+            return true;
+        }
+
+        private static int getMinNumber()
+        {
+            int result=0;
+            for(int i = 0; i < used.Count; i++)
+            {
+                if (!used.Contains(i))
+                {
+                    result = i - 1;
+                    break;
+                }
+              
+            }
+            return result<0?0:result;
+        }
+
+        public static int[] randomMassive (int size, int maxNum)
         {
             Random rnd = new Random();
-            for(int i = 0; i < currentLenghtMassive; i++)
+            int[] randomArray = new int[size];
+            int minNum = 0;
+            for(int i = 0; i < size; i++)
             {
-                int randomNumber = rnd.Next(0, lenghtMassive);
-                if (!randomList.Contains(randomNumber))
-                {
-                    randomList.Add(randomNumber);
+                minNum = getMinNumber();
+                int r = rnd.Next(minNum,maxNum);
+                while (isDouble(r)){
+                    r = rnd.Next(minNum, maxNum);
                 }
+
+                randomArray[i] = r;
+
             }
-            if(randomList.Count < lenghtMassive)
-            {
-                return randomMassive(lenghtMassive - randomList.Count, lenghtMassive,randomList);
-            }
-            return randomList.ToArray() ;
+            return randomArray;
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        
+
+        private void checkAnswer(int indexSelectRadio)
         {
-            string rightOrFalseNumber = "";
             string question = questionsAndAnswers.ElementAt(randomIndexes[index]).Key;
-            if (checkBox1.Text == etalon[question]){
-                rightOrFalseNumber = "1";
-            }
-            else
-            {
-                rightOrFalseNumber = "0";
-            }
+            var selectRadioButton = groupRadioButtons.Controls[indexSelectRadio];
+            bool rightOrFalse = selectRadioButton.Text == etalon[question];
+            
             if (questionsAndUserNaswers.ContainsKey(question))
             {
-                questionsAndUserNaswers[question]=new string[] { checkBox1.Text, rightOrFalseNumber };
+                questionsAndUserNaswers[question] = new string[] { selectRadioButton.Text, rightOrFalse? "1" : "0" };
             }
             else
             {
-                questionsAndUserNaswers.Add(question, new string[] { checkBox1.Text, rightOrFalseNumber });
+                questionsAndUserNaswers.Add(question, new string[] { selectRadioButton.Text, rightOrFalse ? "1" : "0" });
             }
         }
 
-        private void checkBox2_CheckedChanged(object sender, EventArgs e)
-        {
-            string rightOrFalseNumber = "";
-            string question = questionsAndAnswers.ElementAt(randomIndexes[index]).Key;
-            if (checkBox2.Text == etalon[question])
-            {
-                rightOrFalseNumber = "1";
-            }
-            else
-            {
-                rightOrFalseNumber = "0";
-            }
-            if (questionsAndUserNaswers.ContainsKey(question))
-            {
-                questionsAndUserNaswers[question] = new string[] { checkBox2.Text, rightOrFalseNumber };
-            }
-            else
-            {
-                questionsAndUserNaswers.Add(question, new string[] { checkBox2.Text, rightOrFalseNumber });
-            }
-        }
-
-        private void checkBox3_CheckedChanged(object sender, EventArgs e)
-        {
-            string rightOrFalseNumber = "";
-            string question = questionsAndAnswers.ElementAt(randomIndexes[index]).Key;
-            if (checkBox3.Text == etalon[question])
-            {
-                rightOrFalseNumber = "1";
-            }
-            else
-            {
-                rightOrFalseNumber = "0";
-            }
-            if (questionsAndUserNaswers.ContainsKey(question))
-            {
-                questionsAndUserNaswers[question] = new string[] { checkBox3.Text, rightOrFalseNumber };
-            }
-            else
-            {
-                questionsAndUserNaswers.Add(question, new string[] { checkBox3.Text, rightOrFalseNumber });
-            }
-        }
     }
 }
